@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi một người đặc biệt</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff5f7;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .container {
+            z-index: 1;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #d63384;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            background: #ff758f;
+        }
+
+        #message {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 2s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 20px;
+            user-select: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Gửi chị Nguyễn Thị Tú Vi</h1>
+        <button class="btn" onclick="showMessage()">Mở điều bất ngờ ✨</button>
+
+        <div id="message">
+            <h2 style="color: #ff4d6d;">Chúc mừng ngày 8/3! 🌹</h2>
+            <p>Em không giỏi nói những lời hoa mỹ như người ta,<br>
+                nhưng em giỏi làm những thứ dành riêng cho chị.</p>
+            <p><b>Chúc chị luôn rạng rỡ và hạnh phúc nhé!</b></p>
+        </div>
+    </div>
+
+    <script>
+        function showMessage() {
+            document.getElementById('message').style.display = 'block';
+            document.querySelector('.btn').style.display = 'none';
+            setInterval(createHeart, 300);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+    </script>
+</body>
+
+</html>
