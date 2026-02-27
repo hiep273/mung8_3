@@ -5,77 +5,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gửi một người đặc biệt</title>
+    <!-- Thêm font chữ đẹp từ Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #fff5f7;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Đổ bóng nền màu hồng pastel cực nhẹ và mượt */
+            background: linear-gradient(135deg, #ffe0e9 0%, #ffebf0 50%, #fad0e0 100%);
+            font-family: 'Quicksand', sans-serif;
             overflow: hidden;
             text-align: center;
         }
 
+        /* Khung kính bóng mờ hiện đại (Glassmorphism) */
         .container {
-            z-index: 1;
-            padding: 20px;
+            z-index: 10;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 105, 135, 0.15);
+            max-width: 90%;
+            width: 450px;
+            /* Hoạt ảnh lอย nhẹ trên không */
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
         }
 
         h1 {
+            font-family: 'Dancing Script', cursive;
             color: #d63384;
-            margin-bottom: 20px;
+            font-size: 3.2rem;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(232, 62, 140, 0.15);
         }
 
         .btn {
-            padding: 15px 30px;
-            font-size: 18px;
-            background: #ff4d6d;
+            padding: 16px 36px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Quicksand', sans-serif;
+            /* Nút bấm chuyển màu (gradient) đep mắt */
+            background: linear-gradient(45deg, #ff4b72, #ff758f);
             color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
-            transition: 0.3s;
+            box-shadow: 0 8px 15px rgba(255, 77, 109, 0.3);
+            transition: all 0.3s ease;
+            /* Hiệu ứng nhấp nháy thôi thúc người bấm */
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 8px 15px rgba(255, 77, 109, 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 20px rgba(255, 77, 109, 0.5);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 15px rgba(255, 77, 109, 0.3);
+            }
         }
 
         .btn:hover {
-            transform: scale(1.1);
-            background: #ff758f;
+            transform: scale(1.08) translateY(-2px);
+            background: linear-gradient(45deg, #ff2a55, #ff5c77);
+            box-shadow: 0 15px 25px rgba(255, 77, 109, 0.5);
+            animation: none;
+            /* Dừng nháy khi di chuột vào */
         }
 
         #message {
             display: none;
-            margin-top: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 2s;
+            margin-top: 10px;
+            /* Hoạt ảnh hiện ra từ từ thật mượt */
+            animation: reveal 1s ease-out forwards;
         }
 
-        @keyframes fadeIn {
-            from {
+        @keyframes reveal {
+            0% {
                 opacity: 0;
+                transform: translateY(30px) scale(0.9);
             }
 
-            to {
+            100% {
                 opacity: 1;
+                transform: translateY(0) scale(1);
             }
         }
 
+        h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #d62828;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(214, 40, 40, 0.2);
+        }
+
+        p {
+            color: #4a4a4a;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        p.highlight {
+            color: #c9184a;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-top: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Phong cách cho những icon rơi (trái tim, hoa) */
         .heart {
             position: absolute;
-            color: #ff4d6d;
-            font-size: 20px;
             user-select: none;
             animation: fall linear forwards;
+            z-index: 0;
+            pointer-events: none;
+            /* Không làm ảnh hưởng khi click nht */
         }
 
         @keyframes fall {
-            to {
-                transform: translateY(100vh);
+            0% {
+                transform: translateY(-15vh) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(115vh) rotate(360deg) scale(1.2);
                 opacity: 0;
             }
         }
@@ -84,33 +185,62 @@
 
 <body>
 
-    <div class="container">
-        <h1>Gửi chị Nguyễn Thị Tú Vi</h1>
-        <button class="btn" onclick="showMessage()">Mở điều bất ngờ ✨</button>
+    <div class="container" id="mainContainer">
+        <h1 id="title">Gửi chị Tú Vi</h1>
+        <button class="btn" onclick="showMessage()" id="actionBtn">Mở điều bất ngờ ✨</button>
 
         <div id="message">
-            <h2 style="color: #ff4d6d;">Chúc mừng ngày 8/3! 🌹</h2>
+            <h2>Chúc mừng 8/3! 🌹</h2>
             <p>Em không giỏi nói những lời hoa mỹ như người ta,<br>
                 nhưng em giỏi làm những thứ dành riêng cho chị.</p>
-            <p><b>Chúc chị luôn rạng rỡ và hạnh phúc nhé!</b></p>
+            <p class="highlight">Chúc chị luôn rạng rỡ và hạnh phúc nhé! ❤️</p>
         </div>
     </div>
 
     <script>
         function showMessage() {
+            // Hiển thị khung lời chúc
             document.getElementById('message').style.display = 'block';
-            document.querySelector('.btn').style.display = 'none';
-            setInterval(createHeart, 300);
+
+            // Ẩn nút nhấn và tiêu đề ban đầu đi cho đỡ rối mắt
+            document.getElementById('actionBtn').style.display = 'none';
+            document.getElementById('title').style.display = 'none';
+
+            // Nới rộng thêm khung container
+            document.getElementById('mainContainer').style.padding = '50px 30px';
+
+            // Tạo hiệu ứng thả liên tục (tim, hoa, sao lấp lánh...)
+            setInterval(createHeart, 250);
+
+            // Bắn một lúc nhiều biểu tượng ra luôn ngay khi bấm nút
+            for (let i = 0; i < 20; i++) {
+                setTimeout(createHeart, Math.random() * 600);
+            }
         }
 
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            heart.innerHTML = '❤️';
+
+            // Danh sách các icon để random roi xuống
+            const iconList = ['❤️', '💖', '🌸', '✨', '💕', '🌷', '💝', '🎀'];
+            heart.innerHTML = iconList[Math.floor(Math.random() * iconList.length)];
+
+            // Ngược sáng vị trí rơi ra ở chiều ngang
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+
+            // Random kích cỡ (Icon to nhỏ khác nhau sẽ tự nhiên hơn)
+            const size = Math.random() * 1.5 + 0.8;
+            heart.style.fontSize = (size * 22) + 'px';
+
+            // Tốc độ rơi từ 3 đến 8 giây
+            const duration = Math.random() * 5 + 3;
+            heart.style.animationDuration = duration + 's';
+
             document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 5000);
+
+            // Tự dọn dẹp các icon cữ khi rụng quá màn hình để không tốn ram
+            setTimeout(() => { heart.remove(); }, duration * 1000 + 1000);
         }
     </script>
 </body>
