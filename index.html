@@ -261,6 +261,57 @@
             z-index: 20;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
         }
+
+        /* --- RESPONSIVE CHO ĐIỆN THOẠI & TABLET --- */
+        @media screen and (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+            }
+
+            h2 {
+                font-size: 2.2rem;
+            }
+
+            p {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+
+            p.highlight {
+                font-size: 1.15rem;
+                margin-top: 15px;
+            }
+
+            .btn {
+                padding: 12px 28px;
+                font-size: 1rem;
+            }
+
+            @keyframes growHeart {
+                0% {
+                    transform: scale(0.1);
+                    opacity: 0;
+                }
+
+                40% {
+                    opacity: 1;
+                    transform: scale(1.2);
+                }
+
+                100% {
+                    /* Trên điện thoại, thu nhỏ độ phóng to chỉ còn khoảng 3.5 đến 4 */
+                    transform: scale(4);
+                    opacity: 1;
+                }
+            }
+        }
     </style>
 </head>
 
