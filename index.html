@@ -163,27 +163,113 @@
 
         @keyframes fall {
             0% {
-                transform: translateY(-15vh) rotate(0deg) scale(0.8);
+                transform: translateY(-15vh) rotate(0deg) scale(0.1);
                 opacity: 0;
             }
 
             15% {
                 opacity: 1;
+                transform: translateY(10vh) rotate(45deg) scale(0.5);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(50vh) rotate(180deg) scale(1);
             }
 
             85% {
                 opacity: 1;
+                transform: translateY(90vh) rotate(270deg) scale(1.3);
             }
 
             100% {
-                transform: translateY(115vh) rotate(360deg) scale(1.2);
+                transform: translateY(115vh) rotate(360deg) scale(1.6);
                 opacity: 0;
             }
+        }
+
+        /* --- TRÁI TIM LỚN BAO QUANH LỜI CHÚC --- */
+        .big-heart-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            /* Ban đầu ẩn */
+            z-index: 5;
+            /* Nằm dưới khung chữ */
+            pointer-events: none;
+        }
+
+        .big-heart {
+            position: relative;
+            width: 100px;
+            height: 90px;
+            animation: growHeart 2s ease-out forwards;
+        }
+
+        /* Cách tạo hình trái tim bằng CSS */
+        .big-heart::before,
+        .big-heart::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 50px;
+            height: 80px;
+            border-radius: 50px 50px 0 0;
+            background: rgba(255, 77, 109, 0.4);
+            /* Màu trái tim làm nền */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 0 50px rgba(255, 77, 109, 0.5);
+        }
+
+        .big-heart::before {
+            left: 50px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .big-heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        @keyframes growHeart {
+            0% {
+                transform: scale(0.1);
+                /* Xuất hiện rất nhỏ từ giữa */
+                opacity: 0;
+            }
+
+            40% {
+                opacity: 1;
+                transform: scale(2);
+            }
+
+            100% {
+                /* Phóng to cực đại ôm trọn khung chữ */
+                transform: scale(8.5);
+                opacity: 1;
+            }
+        }
+
+        /* Chỉnh lại 1 chút cho chữ thật rõ trên nền trái tim */
+        #message {
+            position: relative;
+            z-index: 20;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
         }
     </style>
 </head>
 
 <body>
+
+    <!-- Khối trái tim lớn nằm dưới background container -->
+    <div class="big-heart-wrapper" id="bgHeart">
+        <div class="big-heart"></div>
+    </div>
 
     <div class="container" id="mainContainer">
         <h1 id="title">Gửi chị Tú Vi</h1>
@@ -199,20 +285,27 @@
 
     <script>
         function showMessage() {
-            // Hiển thị khung lời chúc
+            // 1. Hiện trái tim khổng lồ từ phía sau
+            document.getElementById('bgHeart').style.display = 'block';
+
+            // 2. Hiển thị khung lời chúc
             document.getElementById('message').style.display = 'block';
 
-            // Ẩn nút nhấn và tiêu đề ban đầu đi cho đỡ rối mắt
+            // Ẩn nút nhấn và tiêu đề ban đầu đi
             document.getElementById('actionBtn').style.display = 'none';
             document.getElementById('title').style.display = 'none';
 
-            // Nới rộng thêm khung container
-            document.getElementById('mainContainer').style.padding = '50px 30px';
+            // Dỡ bỏ nền mờ của khung cũ đi để nét trái tim đằng sau hiện rõ nhất
+            const container = document.getElementById('mainContainer');
+            container.style.padding = '50px 30px';
+            container.style.background = 'transparent';
+            container.style.border = 'none';
+            container.style.boxShadow = 'none';
+            container.style.backdropFilter = 'none';
 
-            // Tạo hiệu ứng thả liên tục (tim, hoa, sao lấp lánh...)
+            // 3. Tạo hiệu ứng biểu tượng rơi liên tục
             setInterval(createHeart, 250);
 
-            // Bắn một lúc nhiều biểu tượng ra luôn ngay khi bấm nút
             for (let i = 0; i < 20; i++) {
                 setTimeout(createHeart, Math.random() * 600);
             }
@@ -222,24 +315,18 @@
             const heart = document.createElement('div');
             heart.classList.add('heart');
 
-            // Danh sách các icon để random roi xuống
             const iconList = ['❤️', '💖', '🌸', '✨', '💕', '🌷', '💝', '🎀'];
             heart.innerHTML = iconList[Math.floor(Math.random() * iconList.length)];
-
-            // Ngược sáng vị trí rơi ra ở chiều ngang
             heart.style.left = Math.random() * 100 + 'vw';
 
-            // Random kích cỡ (Icon to nhỏ khác nhau sẽ tự nhiên hơn)
             const size = Math.random() * 1.5 + 0.8;
             heart.style.fontSize = (size * 22) + 'px';
 
-            // Tốc độ rơi từ 3 đến 8 giây
             const duration = Math.random() * 5 + 3;
             heart.style.animationDuration = duration + 's';
 
             document.body.appendChild(heart);
 
-            // Tự dọn dẹp các icon cữ khi rụng quá màn hình để không tốn ram
             setTimeout(() => { heart.remove(); }, duration * 1000 + 1000);
         }
     </script>
