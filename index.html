@@ -108,10 +108,10 @@
             /* Dừng nháy khi di chuột vào */
         }
 
+        /* Hiệu ứng mượt cho khung thông báo chung */
         #message {
             display: none;
             margin-top: 10px;
-            /* Hoạt ảnh hiện ra từ từ thật mượt */
             animation: reveal 1s ease-out forwards;
         }
 
@@ -124,6 +124,39 @@
             100% {
                 opacity: 1;
                 transform: translateY(0) scale(1);
+            }
+        }
+
+        /* --- HIỆU ỨNG TỪNG DÒNG CHỮ --- */
+        #message h2,
+        #message p {
+            opacity: 0;
+            /* Ban đầu ẩn */
+            animation: textFadeIn 1.5s ease-out forwards;
+        }
+
+        /* Tăng dần độ trễ cho từng khối */
+        #message h2 {
+            animation-delay: 0.5s;
+        }
+
+        #message p:nth-of-type(1) {
+            animation-delay: 2s;
+        }
+
+        #message p.highlight {
+            animation-delay: 5s;
+        }
+
+        @keyframes textFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -312,10 +345,124 @@
                 }
             }
         }
+
+        /* --- HIỆU ỨNG RÈM CỬA --- */
+        #curtain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            /* Gradient đỏ nhung như rèm sân khấu */
+            background: linear-gradient(to right, #8a0c20, #e01b3c, #8a0c20);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            transition: transform 0.5s ease-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            /* Texture vải rèm nếp gấp */
+            background-image: repeating-linear-gradient(90deg,
+                    rgba(0, 0, 0, 0.15) 0px,
+                    transparent 20px,
+                    rgba(0, 0, 0, 0.15) 40px);
+        }
+
+        #curtain-text {
+            color: #ffd700;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.4rem;
+            margin-bottom: 50px;
+            font-weight: 700;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+            animation: pulseText 1.5s infinite;
+            letter-spacing: 1px;
+        }
+
+        @keyframes pulseText {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        #rope {
+            position: relative;
+            bottom: 0;
+            width: 80px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: grab;
+            animation: bounceRope 2s infinite;
+            z-index: 101;
+            touch-action: none;
+            /* Tránh cuộn trang trên điện thoại */
+        }
+
+        #rope:active {
+            cursor: grabbing;
+        }
+
+        @keyframes bounceRope {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(15px);
+            }
+        }
+
+        .rope-line {
+            width: 6px;
+            height: 100px;
+            background: #d4a373;
+            border-radius: 3px;
+            box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .rope-handle {
+            width: 50px;
+            height: 50px;
+            background: #e9c46a;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4), inset -5px -5px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #8a0c20;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: -5px;
+            user-select: none;
+            border: 2px solid #ffd700;
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Rèm cửa che phủ ban đầu -->
+    <div id="curtain">
+        <h3 id="curtain-text">Kéo nhẹ sợi dây xuống nhé ✨</h3>
+        <div id="rope">
+            <div class="rope-line"></div>
+            <div class="rope-handle">KÉO</div>
+        </div>
+    </div>
 
     <!-- Khối trái tim lớn nằm dưới background container -->
     <div class="big-heart-wrapper" id="bgHeart">
@@ -324,8 +471,8 @@
 
     <div class="container" id="mainContainer">
         <h1 id="title">Gửi chị Tú Vi</h1>
-        <button class="btn" onclick="showMessage()" id="actionBtn">Mở điều bất ngờ ✨</button>
 
+        <!-- Khung lời chúc sẽ hiện ra sau khi mở rèm -->
         <div id="message">
             <h2>Chúc mừng 8/3! 🌹</h2>
             <p>Em không giỏi nói những lời hoa mỹ như người ta,<br>
@@ -335,18 +482,77 @@
     </div>
 
     <script>
+        // --- XỬ LÝ SỰ KIỆN KÉO RÈM CỬA ---
+        let isDragging = false;
+        let startY = 0;
+        const curtain = document.getElementById('curtain');
+        const rope = document.getElementById('rope');
+        let isOpened = false;
+
+        function onDragStart(e) {
+            if (isOpened) return;
+            isDragging = true;
+            curtain.style.transition = 'none'; // Tắt transition để kéo mượt
+            rope.style.animation = 'none'; // Tắt nhún nhảy khi đang kéo
+            startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        }
+
+        function onDragMove(e) {
+            if (!isDragging || isOpened) return;
+            let clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            let moveY = clientY - startY;
+
+            // Khi kéo dây XUỐNG (moveY > 0), rèm di chuyển LÊN (translateY âm)
+            if (moveY > 0) {
+                curtain.style.transform = `translateY(-${moveY}px)`;
+
+                // Kéo đủ 120px là mở rèm
+                if (moveY > 120) {
+                    openCurtain();
+                }
+            }
+        }
+
+        function onDragEnd() {
+            if (!isDragging || isOpened) return;
+            isDragging = false;
+
+            // Đàn hồi lại nếu chưa kéo đủ lực
+            curtain.style.transition = 'transform 0.5s cubic-bezier(0.25, 1.5, 0.5, 1)';
+            curtain.style.transform = `translateY(0)`;
+            rope.style.animation = 'bounceRope 2s infinite';
+        }
+
+        function openCurtain() {
+            isOpened = true;
+            isDragging = false;
+            // Hiệu ứng rèm bay vút lên
+            curtain.style.transition = 'transform 1s cubic-bezier(0.25, 1, 0.25, 1)';
+            curtain.style.transform = 'translateY(-100vh)';
+
+            setTimeout(() => {
+                curtain.style.display = 'none';
+            }, 1000);
+
+            // Bắt đầu hiển thị nội dung chính
+            showMessage();
+        }
+
+        // Gắn sự kiện kéo/thả cho sợi dây
+        rope.addEventListener('mousedown', onDragStart);
+        window.addEventListener('mousemove', onDragMove, { passive: false });
+        window.addEventListener('mouseup', onDragEnd);
+
+        rope.addEventListener('touchstart', onDragStart, { passive: true });
+        window.addEventListener('touchmove', onDragMove, { passive: false });
+        window.addEventListener('touchend', onDragEnd);
+
+        // --- HIỂN THỊ LỜI CHÚC SAU KHI MỞ RÈM ---
         function showMessage() {
-            // 1. Hiện trái tim khổng lồ từ phía sau
             document.getElementById('bgHeart').style.display = 'block';
-
-            // 2. Hiển thị khung lời chúc
             document.getElementById('message').style.display = 'block';
-
-            // Ẩn nút nhấn và tiêu đề ban đầu đi
-            document.getElementById('actionBtn').style.display = 'none';
             document.getElementById('title').style.display = 'none';
 
-            // Dỡ bỏ nền mờ của khung cũ đi để nét trái tim đằng sau hiện rõ nhất
             const container = document.getElementById('mainContainer');
             container.style.padding = '50px 30px';
             container.style.background = 'transparent';
@@ -354,7 +560,6 @@
             container.style.boxShadow = 'none';
             container.style.backdropFilter = 'none';
 
-            // 3. Tạo hiệu ứng biểu tượng rơi liên tục
             setInterval(createHeart, 250);
 
             for (let i = 0; i < 20; i++) {
